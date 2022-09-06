@@ -17,4 +17,10 @@ class Evento extends Model
     {
         return "ID_Evento";
     }
+
+    //Se definen los campos que se pueden llenar mediante create
+    protected $fillable = [
+        'Fecha_Inicio',
+        'Fecha_Fin',
+    ];
 }

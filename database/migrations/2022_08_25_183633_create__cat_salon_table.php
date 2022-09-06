@@ -16,7 +16,7 @@ class CreateCatSalonTable extends Migration
         Schema::create('cat_salon', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->id('ID_Salon');
-            $table->char('Nombre', 100);
+            $table->char('Salon', 100);
             $table->tinyInteger('Estatus')->default(1)->comment('1 = Activo / 0 = Desactivado');
             $table->timestamps();
         });

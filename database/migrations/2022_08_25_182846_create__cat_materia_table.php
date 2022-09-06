@@ -16,7 +16,7 @@ class CreateCatMateriaTable extends Migration
         Schema::create('cat_materia', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->id('ID_Materia');
-            $table->char('Nombre', 50);
+            $table->char('Materia', 50);
             $table->tinyInteger('Estatus')->default(1)->comment('1 = Activo / 0 = Desactivado');
             $table->timestamps();
         });

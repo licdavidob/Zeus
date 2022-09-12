@@ -17,7 +17,7 @@ class Cat_Materia_Seeder extends Seeder
         Cat_Materia::query()->delete();
         for ($i = 1; $i <= 5; $i++) {
             Cat_Materia::create([
-                'Nombre' => "Materia $i"
+                'Materia' => "Materia $i"
             ]);
         }
     }

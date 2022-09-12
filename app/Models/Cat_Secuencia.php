@@ -17,4 +17,9 @@ class Cat_Secuencia extends Model
     {
         return "ID_Secuencia";
     }
+
+    public function Clase()
+    {
+        return $this->hasMany(Cat_Secuencia::class, 'ID_Clase', 'ID_Clase');
+    }
 }

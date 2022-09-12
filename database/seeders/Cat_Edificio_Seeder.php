@@ -17,7 +17,7 @@ class Cat_Edificio_Seeder extends Seeder
         Cat_Edificio::query()->delete();
         for ($i = 1; $i <= 5; $i++) {
             Cat_Edificio::create([
-                'Nombre' => "Edificio $i"
+                'Edificio' => "Edificio $i"
             ]);
         }
     }

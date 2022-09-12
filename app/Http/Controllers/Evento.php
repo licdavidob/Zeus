@@ -14,29 +14,31 @@ use App\Models\Evento as Modelo_Evento;
 class Evento extends Controller
 {
     private $ID_Evento;
-    private $Fecha_Inicio;
-    private $Fecha_Fin;
+    protected $Fecha_Inicio;
+    protected $Fecha_Fin;
 
-    //Métodos para registrar una Evento
+    //Métodos para registrar un evento
 
+    /**
+     * Permite registrar un evento recibiendo como parametro un arreglo con
+     * los campos de la fecha inicio y la fecha fin del evento
+     */
     public function RegistrarEvento($Evento)
     {
-        $this->Fecha_Inicio = $Evento['Fecha_Inicio'];
-        $this->Fecha_Fin = $Evento['Fecha_Fin'];
-
         Modelo_Evento::create([
-            'Fecha_Inicio' => $this->Fecha_Inicio,
-            'Fecha_Fin' => $this->Fecha_Fin,
+            'Fecha_Inicio' => $Evento->Fecha_Inicio,
+            'Fecha_Fin' => $Evento->Fecha_Fin,
         ]);
-
-        $EventoInsertado = Modelo_Evento::select('ID_Evento')->latest('ID_Evento')->first();
-        $this->ID_Evento = $EventoInsertado['ID_Evento'];
 
         return $this;
     }
 
-    //Metodos de busqueda para las clases
+    //Metodos de busqueda de eventos
 
+    /**
+     * Busca un evento por ID y guarda los resultados
+     * en los atributos de la clase
+     */
     public function EventoporID($id)
     {
         $BusquedaEvento = Modelo_Evento::findOrFail($id);
@@ -46,8 +48,22 @@ class Evento extends Controller
         return $this;
     }
 
+    /**
+     * Retorna el ID del último evento insertado
+     */
+    public function UltimoEventoInsertado()
+    {
+        $UltimoEvento = Modelo_Evento::select('ID_Evento')->latest('ID_Evento')->first();
+        $this->ID_Evento = $UltimoEvento->ID_Evento;
+        return $this;
+    }
+
     //Métodos para obtener los datos de un evento
 
+    /**
+     * Obtiene la información de los atributos de la clase,
+     * los guarda n un arreglo y los regresa
+     */
     public function ObtenerEvento()
     {
         $Evento["ID_Evento"] = $this->ID_Evento;
@@ -56,16 +72,9 @@ class Evento extends Controller
         return $Evento;
     }
 
-    public function ObtenerFecha_Inicio()
-    {
-        return $this->Fecha_Inicio;
-    }
-
-    public function ObtenerFecha_Fin()
-    {
-        return $this->Fecha_Fin;
-    }
-
+    /**
+     * Retorna el el valor del atributo ID_Evento
+     */
     public function ObtenerEventoID()
     {
         return $this->ID_Evento;

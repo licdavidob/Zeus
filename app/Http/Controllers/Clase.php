@@ -2,21 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 //Controladores
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\Profesor;
 use App\Http\Controllers\Evento;
 
 //Modelos
 use App\Models\Clase as Modelo_Clase;
 
-class Clase extends Controller
+class Clase extends Evento
 {
     private $ID_Clase;
-    private $Fecha_Inicio;
-    private $Fecha_Fin;
     private $Materia;
     private $Secuencia;
     private $Profesor;
@@ -25,61 +20,92 @@ class Clase extends Controller
     private $Estatus;
 
 
-    //Métodos para registrar una Clase
+    //Métodos para registrar una clase
 
-    public function RegistrarClase(Request $Clase)
+    /**
+     * Permite registrar una clase recibiendo como parametro un json
+     * con la información requerida. Toma un arreglo de dias dentro
+     * del JSON y registra cada clase con su respectivo evento del dia
+     */
+    public function RegistrarClase($Clase)
     {
+        foreach ($Clase->Dias as $Dia) {
 
-        $Evento = new Evento();
+            // Se registra cada evento
+            $this->RegistrarEvento($Dia)->UltimoEventoInsertado();
 
-        foreach ($Clase['Dias'] as $Dia) {
-            //Se registra cada evento
-            $Evento->RegistrarEvento($Dia);
-            $this->Fecha_Inicio = $Evento->ObtenerFecha_Inicio();
-            $this->Fecha_Fin = $Evento->ObtenerFecha_Fin();
-
-            //Se asignan atributos de la clase
-            $this->Materia = $Clase['Materia'];
-            $this->Secuencia = $Clase['Secuencia'];
-            $this->Profesor = $Clase['Profesor'];
-            $this->Salon = $Clase['Salon'];
-            $this->Periodo = $Clase['Periodo'];
-
-            //Se registra la clase
+            //Se registra la clase 
             Modelo_Clase::create([
-                'ID_Evento' => $Evento->ObtenerEventoID(),
-                'ID_Materia' => $this->Materia,
-                'ID_Secuencia' => $this->Secuencia,
-                'ID_Profesor' => $this->Profesor,
-                'ID_Salon' => $this->Salon,
-                'ID_Periodo' => $this->Periodo,
+                'ID_Evento' => $this->ObtenerEventoID(),
+                'ID_Materia' => $Clase->Materia,
+                'ID_Secuencia' => $Clase->Secuencia,
+                'ID_Profesor' => $Clase->Profesor,
+                'ID_Salon' => $Clase->Salon,
+                'ID_Periodo' => $Clase->Periodo,
             ]);
-
-            $ClaseInsertado = Modelo_Clase::select('ID_Clase')->latest('ID_Clase')->first();
-            $this->ID_Clase = $ClaseInsertado['ID_Clase'];
         }
         return $this;
     }
 
     //Metodos de busqueda para las clases
 
-    public function ClaseporID($id)
+    /**
+     * Busca una clase por ID y guarda los resultados en los
+     * atributos de la clase
+     */
+    public function ClaseporID($id_Clase)
     {
         $ProfesorBusqueda = new Profesor();
-        //TODO: Falta buscar la fecha fin e inicio :(
-        $BusquedaClase = Modelo_Clase::findOrFail($id);
+
+        //Se realiza la búsqueda de la clase 
+        $BusquedaClase = Modelo_Clase::findOrFail($id_Clase);
+
+        //Se realiza la busqueda del evento que pertence a la clase
+        $this->EventoporID($BusquedaClase->ID_Evento);
+
+        //Se asignan los atributos de la clase
         $this->ID_Clase = $BusquedaClase->ID_Clase;
-        $this->Materia = $BusquedaClase->Cat_Materia->Nombre;
+        $this->Materia = $BusquedaClase->Cat_Materia->Materia;
         $this->Secuencia = $BusquedaClase->Cat_Secuencia->Secuencia;
         $this->Profesor = $ProfesorBusqueda->ProfesorporID($BusquedaClase->ID_Profesor)->NombreCompleto();
-        $this->Salon = $BusquedaClase->Cat_Salon->Nombre;
+        $this->Salon = $BusquedaClase->Cat_Salon->Salon;
         $this->Periodo = $BusquedaClase->Periodo->Periodo;
         $this->Estatus = $BusquedaClase->Estatus;
         return $this;
     }
 
+    /**
+     * Busca todas las clases que pertenezcan a una secuencia y retorna
+     * un arreglo con la informacion de las mismas
+     */
+    public function ClasesporSecuencia($id_Secuencia)
+    {
+        $BusquedaClases = Modelo_Clase::select('ID_Clase')->where('ID_Secuencia', $id_Secuencia)->get();
+        $i = 0;
+        foreach ($BusquedaClases as $Clase) {
+            $this->ClaseporID($Clase->ID_Clase);
+            $Clases[$i] = $this->ObtenerClase();
+            $i++;
+        }
+        return $Clases;
+    }
+
+    /**
+     * Retorna el ID de la última clase insertada 
+     */
+    public function UltimaClaseInsertada()
+    {
+        $UltimaClase = Modelo_Clase::select('ID_Clase')->latest('ID_Clase')->first();
+        $this->ID_Clase = $UltimaClase->ID_Clase;
+        return $this;
+    }
+
     //Métodos para obtener los datos de una clase
 
+    /**
+     * Obtiene la información de los atributos de la clase,
+     * los guarda en un arreglo y lo regresa
+     */
     public function ObtenerClase()
     {
         $Clase["ID_Clase"] = $this->ID_Clase;

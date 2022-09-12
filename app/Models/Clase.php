@@ -18,6 +18,16 @@ class Clase extends Model
         return "ID_Clase";
     }
 
+    //Se definen los campos que se pueden llenar mediante create
+    protected $fillable = [
+        'ID_Evento',
+        'ID_Secuencia',
+        'ID_Materia',
+        'ID_Profesor',
+        'ID_Salon',
+        'ID_Periodo',
+    ];
+
     //Catálogos
     public function Cat_Secuencia()
     {

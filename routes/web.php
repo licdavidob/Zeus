@@ -19,4 +19,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('/evento', [Clase::class, 'RegistrarClaseporDias']);
+Route::post('/evento', [Clase::class, 'EventoporID']);

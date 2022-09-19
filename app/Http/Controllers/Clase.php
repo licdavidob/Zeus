@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 //Controladores
 use App\Http\Controllers\Profesor;
-use App\Http\Controllers\Evento;
+use App\Http\Controllers\Dia;
+use Illuminate\Http\Request;
 
 //Modelos
 use App\Models\Clase as Modelo_Clase;
@@ -27,7 +28,7 @@ class Clase extends Evento
      * con la información requerida. Toma un arreglo de dias dentro
      * del JSON y registra cada clase con su respectivo evento del dia
      */
-    public function RegistrarClase($Clase)
+    public function RegistrarClase(Request $Clase)
     {
         foreach ($Clase->Dias as $Dia) {
 
@@ -36,7 +37,7 @@ class Clase extends Evento
 
             //Se registra la clase 
             Modelo_Clase::create([
-                'ID_Evento' => $this->ObtenerEventoID(),
+                'ID_Evento' => $this->ID_Evento,
                 'ID_Materia' => $Clase->Materia,
                 'ID_Secuencia' => $Clase->Secuencia,
                 'ID_Profesor' => $Clase->Profesor,
@@ -88,6 +89,16 @@ class Clase extends Evento
             $i++;
         }
         return $Clases;
+    }
+
+    public function DiasDeUnaClase($Clase)
+    {
+        $DiasDeUnaClase = new Dia();
+
+        $IniciaPeriodo = $Clase->Periodo->Fecha_Inicio;
+        $FinPeriodo = $Clase->Periodo->Fecha_Fin;
+
+        $DiasDeUnaClase->CalculaDiasEnRango($IniciaPeriodo, $FinPeriodo, $this->Fecha_Inicio);
     }
 
     /**

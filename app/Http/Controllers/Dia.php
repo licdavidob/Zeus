@@ -2,48 +2,59 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class Dia
 {
     private $Dias = array();
 
-    public function ObtenerDias($Inicio_Periodo, $Fin_Periodo, $Clase)
+    /**
+     * Se agregan 7 dias a partir de una fecha, dentro de un periodo de tiempo definido.
+     * Sirve para calcular todos los dias que se va a impartir una clase
+     * dentro de un periodo escolar
+     */
+    public function CalculaDiasEnRango(string $Inicia_Rango, string $Fin_Rango, string $Fecha)
     {
-        $Clase = new Carbon($Clase);
-        $Inicio_Periodo = new Carbon($Inicio_Periodo);
-        $Fin_Periodo = new Carbon($Fin_Periodo);
+        $Fecha = new Carbon($Fecha);
+        $Inicia_Rango = new Carbon($Inicia_Rango);
+        $Fin_Rango = new Carbon($Fin_Rango);
 
-        $Bandera = true;
         $i = 0;
-        $Hora = $Clase->toTimeString();
-        /**
-         * TODO: Encontrar la manera de mejorar este código, ya que tengo que guardar la variable
-         * TODO: de la hora para no perderla al momento de hacer ejecutar le método "NEXT()" dentro del while
-         */
-        while ($Bandera) {
-            if ($this->RevisarDiaEnRango($Inicio_Periodo, $Fin_Periodo, $Clase)) {
-                $this->Dias[$i] = "{$Clase->toDateString()} $Hora";
-                $Clase = $Clase->next();
-                $i++;
-            } else {
-                $Bandera = false;
+
+        while (true) {
+
+            //Valida que el dia se encuentre dentro del rango del periodo
+            if (!$this->RevisarDiaEnRango($Inicia_Rango, $Fin_Rango, $Fecha)) {
+                return $this;
             }
+
+            $this->Dias[$i] = $Fecha->toDateTimeString();
+            $Fecha = $Fecha->addDays(7);
+            $i++;
         }
-        return $this;
     }
 
-    public function RevisarDiaEnRango($FechaInicio, $FechaFin, $Fecha)
+    /**
+     * Valida si un dia se encuentra dentro de una rango de fechas
+     */
+    public function RevisarDiaEnRango(string $Inicia_Rango, string $Fin_Rango, string $Fecha)
     {
-        $FechaInicio = strtotime($FechaInicio);
-        $FechaFin = strtotime($FechaFin);
+        $Inicia_Rango = strtotime($Inicia_Rango);
+        $Fin_Rango = strtotime($Fin_Rango);
         $Fecha = strtotime($Fecha);
 
-        if (($Fecha >= $FechaInicio) && ($Fecha <= $FechaFin)) {
+        if (($Fecha >= $Inicia_Rango) && ($Fecha <= $Fin_Rango)) {
             return true;
         } else {
             return false;
         }
+    }
+
+    /**
+     * Se encarga de retornar el atributo Dias
+     */
+    public function ObtenerDias()
+    {
+        return $this->Dias;
     }
 }

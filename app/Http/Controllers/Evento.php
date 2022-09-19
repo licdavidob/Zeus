@@ -26,8 +26,8 @@ class Evento extends Controller
     public function RegistrarEvento($Evento)
     {
         Modelo_Evento::create([
-            'Fecha_Inicio' => $Evento->Fecha_Inicio,
-            'Fecha_Fin' => $Evento->Fecha_Fin,
+            'Fecha_Inicio' => $Evento['Fecha_Inicio'],
+            'Fecha_Fin' => $Evento['Fecha_Fin'],
         ]);
 
         return $this;
@@ -70,13 +70,5 @@ class Evento extends Controller
         $Evento["Fecha_Inicio"] = $this->Fecha_Inicio;
         $Evento["Fecha_Fin"] = $this->Fecha_Fin;
         return $Evento;
-    }
-
-    /**
-     * Retorna el el valor del atributo ID_Evento
-     */
-    public function ObtenerEventoID()
-    {
-        return $this->ID_Evento;
     }
 }

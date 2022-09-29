@@ -10,13 +10,14 @@ use Illuminate\Http\Request;
 //Modelos
 use App\Models\Clase as Modelo_Clase;
 
-class Clase extends Evento
+class Clase
 {
     private $ID_Clase;
     private $Materia;
     private $Secuencia;
     private $Profesor;
     private $Salon;
+    private $Horario;
     private $Periodo;
     private $Estatus;
 
@@ -30,10 +31,11 @@ class Clase extends Evento
      */
     public function RegistrarClase(Request $Clase)
     {
+        $Evento = new Evento();
         foreach ($Clase->Dias as $Dia) {
 
             // Se registra cada evento
-            $this->RegistrarEvento($Dia)->UltimoEventoInsertado();
+            $Evento->RegistrarEvento($Dia)->UltimoEventoInsertado();
 
             //Se registra la clase 
             Modelo_Clase::create([
@@ -56,13 +58,15 @@ class Clase extends Evento
      */
     public function ClaseporID($id_Clase)
     {
+        $Evento = new Evento();
+        $Dia = new Dia();
         $ProfesorBusqueda = new Profesor();
 
         //Se realiza la búsqueda de la clase 
         $BusquedaClase = Modelo_Clase::findOrFail($id_Clase);
 
         //Se realiza la busqueda del evento que pertence a la clase
-        $this->EventoporID($BusquedaClase->ID_Evento);
+        $Evento->EventoporID($BusquedaClase->ID_Evento);
 
         //Se asignan los atributos de la clase
         $this->ID_Clase = $BusquedaClase->ID_Clase;
@@ -70,6 +74,7 @@ class Clase extends Evento
         $this->Secuencia = $BusquedaClase->Cat_Secuencia->Secuencia;
         $this->Profesor = $ProfesorBusqueda->ProfesorporID($BusquedaClase->ID_Profesor)->NombreCompleto();
         $this->Salon = $BusquedaClase->Cat_Salon->Salon;
+        $this->Horario = $Dia->CalculaDiasEnRango($BusquedaClase->Periodo->Fecha_Inicio, $BusquedaClase->Periodo->Fecha_Fin, $Evento->Fecha_Inicio)->ObtenerDias();
         $this->Periodo = $BusquedaClase->Periodo->Periodo;
         $this->Estatus = $BusquedaClase->Estatus;
         return $this;
@@ -120,12 +125,11 @@ class Clase extends Evento
     public function ObtenerClase()
     {
         $Clase["ID_Clase"] = $this->ID_Clase;
-        $Clase["Fecha_Inicio"] = $this->Fecha_Inicio;
-        $Clase["Fecha_Fin"] = $this->Fecha_Fin;
         $Clase["Materia"] = $this->Materia;
         $Clase["Secuencia"] = $this->Secuencia;
         $Clase["Profesor"] = $this->Profesor;
         $Clase["Salon"] = $this->Salon;
+        $Clase["Horario"] = $this->Horario;
         $Clase["Periodo"] = $this->Periodo;
         $Clase["Estatus"] = $this->Estatus;
         return $Clase;

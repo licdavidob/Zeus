@@ -13,9 +13,9 @@ use App\Models\Evento as Modelo_Evento;
 
 class Evento extends Controller
 {
-    private $ID_Evento;
-    protected $Fecha_Inicio;
-    protected $Fecha_Fin;
+    public $ID_Evento;
+    public $Fecha_Inicio;
+    public $Fecha_Fin;
 
     //Métodos para registrar un evento
 

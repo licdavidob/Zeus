@@ -17,7 +17,8 @@ class Clase
     private $Secuencia;
     private $Profesor;
     private $Salon;
-    private $Horario;
+    private $HorarioInicio;
+    private $HorarioFin;
     private $Periodo;
     private $Estatus;
 
@@ -39,7 +40,7 @@ class Clase
 
             //Se registra la clase 
             Modelo_Clase::create([
-                'ID_Evento' => $this->ID_Evento,
+                'ID_Evento' => $Evento->ID_Evento,
                 'ID_Materia' => $Clase->Materia,
                 'ID_Secuencia' => $Clase->Secuencia,
                 'ID_Profesor' => $Clase->Profesor,
@@ -74,7 +75,8 @@ class Clase
         $this->Secuencia = $BusquedaClase->Cat_Secuencia->Secuencia;
         $this->Profesor = $ProfesorBusqueda->ProfesorporID($BusquedaClase->ID_Profesor)->NombreCompleto();
         $this->Salon = $BusquedaClase->Cat_Salon->Salon;
-        $this->Horario = $Dia->CalculaDiasEnRango($BusquedaClase->Periodo->Fecha_Inicio, $BusquedaClase->Periodo->Fecha_Fin, $Evento->Fecha_Inicio)->ObtenerDias();
+        $this->HorarioInicio = $Dia->CalculaDiasEnRango($BusquedaClase->Periodo->Fecha_Inicio, $BusquedaClase->Periodo->Fecha_Fin, $Evento->Fecha_Inicio)->ObtenerDias();
+        $this->HorarioFin = $Dia->CalculaDiasEnRango($BusquedaClase->Periodo->Fecha_Inicio, $BusquedaClase->Periodo->Fecha_Fin, $Evento->Fecha_Fin)->ObtenerDias();
         $this->Periodo = $BusquedaClase->Periodo->Periodo;
         $this->Estatus = $BusquedaClase->Estatus;
         return $this;
@@ -129,7 +131,8 @@ class Clase
         $Clase["Secuencia"] = $this->Secuencia;
         $Clase["Profesor"] = $this->Profesor;
         $Clase["Salon"] = $this->Salon;
-        $Clase["Horario"] = $this->Horario;
+        $Clase["HorarioInicio"] = $this->HorarioInicio;
+        $Clase["HorarioFin"] = $this->HorarioFin;
         $Clase["Periodo"] = $this->Periodo;
         $Clase["Estatus"] = $this->Estatus;
         return $Clase;

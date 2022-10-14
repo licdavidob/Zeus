@@ -21,10 +21,6 @@ class Dia
 
         $i = 0;
 
-        echo "Fecha Inicia Rango: $Inicia_Rango\n";
-        echo "Fecha Fin Rango: $Fin_Rango\n";
-        echo "Fecha: $Fecha\n";
-
         while (true) {
 
             //Valida que el dia se encuentre dentro del rango del periodo

@@ -16,7 +16,7 @@ use App\Http\Controllers\Clase;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('prueba');
 });
 
 Route::post('/evento', [Clase::class, 'RegistrarClase']);

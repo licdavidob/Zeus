@@ -11,4 +11,7 @@ const mix = require("laravel-mix");
  |
  */
 
-mix.postCss("resources/css/style.css", "public/css");
+mix.postCss("resources/css/style.css", "public/css").js(
+    "resources/js/Fullcalendar.js",
+    "public/js"
+);
